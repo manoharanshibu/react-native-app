@@ -6,7 +6,7 @@ import { Provider, connect } from 'react-redux';
 // import axiosMiddleware from 'redux-axios-middleware';
 import thunk from 'redux-thunk';
 
-import CustomerList from './CustomerList';
+import CustomerList from './components/CustomerList';
 import { reducers } from './reducers/reducers';
 
 const store = createStore(reducers, applyMiddleware(thunk));

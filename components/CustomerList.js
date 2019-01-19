@@ -1,17 +1,13 @@
-import React, { Component } from 'react';
+import React, { Component, PureComponent } from 'react';
 import { View, Text, FlatList, StyleSheet, Image } from 'react-native';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import * as actions from './actions/actions';
+import * as actions from '../actions/actions';
 
-import { listRepos } from './reducers/reducers';
-
-import {loadCustomerData} from './actions/actions';
+// import {loadCustomerData} from '../actions/actions';
 import { AES } from 'crypto-js';
 
-let jsonData;
-
-class CustomerList extends Component {
+class CustomerList extends PureComponent {
 
   constructor(props) {
     super(props)
@@ -21,34 +17,33 @@ class CustomerList extends Component {
   }
 
   componentDidMount() {
-
-
-    
     // this.props.loadCustomerData();
-
-    //this.props.listRepos('relferreira');
   }
-  renderItem = ( item ) => {
+  
+  renderItem = ( item, index ) => {
     const email = item.customer.emailAddress;
     const emailHash = email ? AES.encrypt(email.toLowerCase(), '') : '';
-    //alert(emailHash)
-  return (
+    const dt = item.expectedTime.split(/\D/);
+    const expectedTime = dt ? new Date(dt[0], dt[1]-1, dt[2], dt[3], dt[4], dt[5]) : '';
 
-    <View style={styles.item}>
-    <Image
-        style={styles.mediumAvatar}
-        source={{uri: "https://www.gravatar.com/avatar/" + emailHash}}
-    />
-      <Text>{item.customer.name}</Text>
-      <Text>{item.customer.emailAddress}</Text>
-    </View>
+    return (
+      <View key={index} style={styles.item}>
+      <Image
+          style={styles.mediumAvatar}
+          source={{uri: "https://www.gravatar.com/avatar/" + emailHash}}
+      />
+        <Text>{item.customer.name}</Text>
+        <Text>{item.customer.emailAddress}</Text>
+        <Text>{expectedTime.toString()}</Text>
+      </View>
   )};
+
   render() {
     const { repos } = this.props;
     return ([
-      <Text style={styles.title}> Customer Queue </Text>,
+      <Text key="title" style={styles.title}> Customer Queue </Text>,
       this.state.jsonData ? this.state.jsonData.queueData.queue.customersToday.map ( 
-        item => this.renderItem(item)
+        (item, index) => this.renderItem(item, index)
       ) : <Text>No customers in Queue</Text>
     ]);
   }
@@ -79,6 +74,6 @@ const mapStateToProps = (state) => ({
   customerData: state.customerData
 });
   
-  const mapDispatchToProps = (dispatch) => bindActionCreators(actions, dispatch)
+const mapDispatchToProps = (dispatch) => bindActionCreators(actions, dispatch)
 
 export default connect(mapStateToProps, mapDispatchToProps)(CustomerList);
