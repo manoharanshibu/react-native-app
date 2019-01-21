@@ -3,10 +3,11 @@ const initialState = {
 }
 
 const filterCustomerData = (state, text) => {
-  const filtered = state.jsonData.filter( item => {
+  
+  return state.jsonData.filter( item => {
       return item.customer.name.startsWith(text)
   });
-  return state.jsonData;
+  
 }
 
 export function reducers(state= initialState, action) {

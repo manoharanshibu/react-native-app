@@ -16,7 +16,7 @@ class CustomerList extends PureComponent {
   }
 
   componentDidMount() {
-    this.intervalId = setInterval(() => this.props.refreshCustomerData(), 10 * 1000);
+    this.intervalId = setInterval(() => this.props.refreshCustomerData(), 30 * 1000);
     this.props.loadCustomerData();
   }
 
@@ -32,8 +32,6 @@ class CustomerList extends PureComponent {
     if(text === '') this.props.refreshCustomerData();
     else this.props.filterCustomers(text);
 
-    // TODO: Rerendering based on inner array
-    this.forceUpdate();
   }
 
   getCustomerData = () => {
@@ -41,7 +39,8 @@ class CustomerList extends PureComponent {
       try{
         const customers = this.props.jsonData.sort( (item1, item2) => {
           return item1.expectedTime > item2.expectedTime
-        })
+        });
+
         return customers.map ( 
           (item, index) => this.renderItem(item, index)
         );
@@ -57,24 +56,26 @@ class CustomerList extends PureComponent {
     const email = item.customer.emailAddress;
     const emailHash = email ? AES.encrypt(email.toLowerCase(), '') : '';
     const dt = item.expectedTime.split(/\D/);
-    const expectedTime = dt ? new Date(dt[0], dt[1]-1, dt[2], dt[3], dt[4], dt[5]) : '';
+    const expectedTime = dt ? new Date(dt[0], dt[1]-1, dt[2], dt[3], dt[4], dt[5]).toUTCString() : '';
 
     return (
       <View key={index} style={styles.item}>
-      <Image
-          style={styles.mediumAvatar}
-          source={{uri: "https://www.gravatar.com/avatar/" + emailHash}}
-      />
-        <Text>{item.customer.name}</Text>
-        <Text>{item.customer.emailAddress}</Text>
-        <Text>{expectedTime.toString()}</Text>
+        <Image
+            style={styles.mediumAvatar}
+            source={{uri: "https://www.gravatar.com/avatar/" + emailHash}}
+        />
+        <View style={styles.customerText}>
+          <Text>{item.customer.name}</Text>
+          <Text>{item.customer.emailAddress}</Text>
+          <Text>{expectedTime.toString()}</Text>
+        </View>
       </View>
   )};
 
   render() {
     return ([
-      <Text key="title" style={styles.title}> Customer Queue </Text>,
-      <TextInput key="textInput" className="inputText" placeholder="Search" onChangeText={ (text) => this.searchCustomer(text)} />,
+      <View style={styles.title} key="title"><Text style={styles.title}> Customer Queue </Text></View>,
+      <View style={styles.textInput} key="textInput" ><TextInput placeholder="Search" onChangeText={ (text) => this.searchCustomer(text)} /></View>,
       this.getCustomerData()
     ]);
   }
@@ -85,6 +86,8 @@ const styles = StyleSheet.create({
     flex: 1
   },
   item: {
+    flex: 1,
+    flexDirection: 'row',
     padding: 16,
     borderBottomWidth: 1,
     borderBottomColor: '#ccc'
@@ -99,9 +102,17 @@ const styles = StyleSheet.create({
     height: 80,
     borderRadius: 40,
   },
-  inputText: {
-      width: 200,
-      margin: 20,
+  textInput: {
+    padding: 15
+  },
+  title: {
+    backgroundColor: 'lightblue', 
+    padding: 20,
+    fontSize: 20,
+    textAlign: 'center'
+  },
+  customerText: {
+    padding: 10
   }
 });
 
