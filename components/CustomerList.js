@@ -2,7 +2,7 @@ import React, { Component, PureComponent } from 'react';
 import { View, Text, FlatList, StyleSheet, Image, TextInput } from 'react-native';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { filterCustomers, loadCustomerData } from '../actions/actions';
+import { filterCustomers, loadCustomerData, refreshCustomerData } from '../actions/actions';
 // import { CachedImage } from 'react-native-cached-image';
 
 
@@ -16,29 +16,40 @@ class CustomerList extends PureComponent {
   }
 
   componentDidMount() {
+    this.intervalId = setInterval(() => this.props.refreshCustomerData(), 10 * 1000);
     this.props.loadCustomerData();
   }
 
+  // getDerivedStateFromProps(props, state){
+    // TODO
+  // }
+
+  componentWillUnmount(){
+    clearInterval(this.intervalId);
+  }
+
   searchCustomer = (text) => {
-    if(text === '') this.props.loadCustomerData();
+    if(text === '') this.props.refreshCustomerData();
     else this.props.filterCustomers(text);
+
+    // TODO: Rerendering based on inner array
     this.forceUpdate();
   }
 
   getCustomerData = () => {
     if(this.props.jsonData){
       try{
-        const customers = this.props.jsonData.queueData.queue.customersToday.sort( (item1, item2) => {
+        const customers = this.props.jsonData.sort( (item1, item2) => {
           return item1.expectedTime > item2.expectedTime
         })
         return customers.map ( 
           (item, index) => this.renderItem(item, index)
         );
       }catch (error) {
-        return <Text>Some error occured. Please try after some time.</Text>
+        return <Text key="error">Some error occured. Please try after some time.</Text>
       }
     }else {
-        return <Text>No customers in Queue</Text>;
+        return <Text key="nocustmers">No customers in Queue</Text>;
     }
   }
   
@@ -100,7 +111,8 @@ const mapStateToProps = (state) => ({
   
 const mapDispatchToProps = (dispatch) => ({
   loadCustomerData: () => dispatch(loadCustomerData()),
-  filterCustomers: (text) => dispatch(filterCustomers(text))
+  filterCustomers: (text) => dispatch(filterCustomers(text)),
+  refreshCustomerData: () => dispatch(refreshCustomerData())
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(CustomerList);

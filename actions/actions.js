@@ -25,3 +25,10 @@ export const filterCustomers = (state) => {
         payload: state
     }
 }
+
+export const refreshCustomerData = (state) => {
+    return {
+        type: "REFRESH_CUSTOMER_DATA",
+        payload: state
+    }
+}
