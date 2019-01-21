@@ -3,6 +3,8 @@ import { View, Text, FlatList, StyleSheet, Image } from 'react-native';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import * as actions from '../actions/actions';
+// import { CachedImage } from 'react-native-cached-image';
+
 
 // import {loadCustomerData} from '../actions/actions';
 import { AES } from 'crypto-js';
@@ -18,6 +20,23 @@ class CustomerList extends PureComponent {
 
   componentDidMount() {
     // this.props.loadCustomerData();
+  }
+
+  getCustomerData = () => {
+    if(this.state.jsonData){
+      try{
+        const customers = this.state.jsonData.queueData.queue.customersToday.sort( (item1, item2) => {
+          return item1.expectedTime > item2.expectedTime
+        })
+        return customers.map ( 
+          (item, index) => this.renderItem(item, index)
+        );
+      }catch (error) {
+        return <Text>Some error occured. Please try after some time.</Text>
+      }
+    }else {
+        return <Text>No customers in Queue</Text>;
+    }
   }
   
   renderItem = ( item, index ) => {
@@ -39,12 +58,9 @@ class CustomerList extends PureComponent {
   )};
 
   render() {
-    const { repos } = this.props;
     return ([
       <Text key="title" style={styles.title}> Customer Queue </Text>,
-      this.state.jsonData ? this.state.jsonData.queueData.queue.customersToday.map ( 
-        (item, index) => this.renderItem(item, index)
-      ) : <Text>No customers in Queue</Text>
+      this.getCustomerData()
     ]);
   }
 }

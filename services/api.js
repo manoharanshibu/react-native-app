@@ -10,14 +10,11 @@ export const apiGetItems = (url) => {
         url: 'https://app.qudini.com/api/queue/gj9fs',
         method: 'GET',
         headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json',
-            'Authorization': basicAuth,
-            'Access-Control-Allow-Origin': '*'
+            'Authorization': 'Basic Y29kZXRlc3QxOmNvZGV0ZXN0MTAw'
          }
       })
-      .then(data => alert(data))
-      .catch(error => alert(error))
+      .then(data => console.log(data))
+      .catch(error => console.log(error))
 
     // return axios.get(url, {headers: {Authorization : basicAuth}})
 }
