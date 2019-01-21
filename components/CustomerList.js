@@ -24,7 +24,6 @@ class CustomerList extends PureComponent {
   }
 
   getCustomerData = () => {
-    //alert(this.props.jsonData.queueData.queue.customersToday.length)
     if(this.props.jsonData){
       try{
         const customers = this.props.jsonData.queueData.queue.customersToday.sort( (item1, item2) => {
