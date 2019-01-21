@@ -17,5 +17,11 @@ export const loadCustomerData = (state) => {
        } catch (e) {
            // dispatch("ERROR")
        }
+}
 
+export const filterCustomers = (state) => {
+    return {
+        type: "FILTER_CUSTOMERS",
+        payload: state
+    }
 }
