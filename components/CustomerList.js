@@ -61,7 +61,7 @@ class CustomerList extends PureComponent {
   render() {
     return ([
       <Text key="title" style={styles.title}> Customer Queue </Text>,
-      <TextInput className="inputText" placeholder="Search" onChangeText={ (text) => this.searchCustomer(text)} />,
+      <TextInput key="textInput" className="inputText" placeholder="Search" onChangeText={ (text) => this.searchCustomer(text)} />,
       this.getCustomerData()
     ]);
   }
