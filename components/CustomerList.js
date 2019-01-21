@@ -20,7 +20,9 @@ class CustomerList extends PureComponent {
   }
 
   searchCustomer = (text) => {
-    this.props.filterCustomers(text)
+    if(text === '') this.props.loadCustomerData();
+    else this.props.filterCustomers(text);
+    this.forceUpdate();
   }
 
   getCustomerData = () => {
