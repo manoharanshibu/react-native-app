@@ -1,22 +1,22 @@
-import {apiPostItems, apiGetItems} from '../services/api';
 
 
-const url = 'https://app.qudini.com/api/queue/gj9fs?username=codetest1&password=codetest100';
+const IP_PORT_ADDRESS = '192.168.1.2:3000';
 
 export const loadCustomerData = (state) => {
-    
-    // async () => {
-        // dispatch("LOADED");
-       try {
-           // const res = await apiGetItems(url, '');
-           return {
-                type: "LOAD_CUSTOMER_DATA",
-                payload: state
-            }
-           
-       } catch (e) {
-           // dispatch("ERROR")
-       }
+
+    return dispatch => {        
+        return fetch(`http://${IP_PORT_ADDRESS}/api/getcustomers`)
+            .then(
+                response => response.json(),
+                error => console.log('An error occurred.', error)
+            )
+            .then(json => {
+                dispatch({
+                    type: "LOAD_CUSTOMER_DATA",
+                    payload: json
+                })
+            })
+    }
 }
 
 export const filterCustomers = (state) => {
@@ -27,8 +27,17 @@ export const filterCustomers = (state) => {
 }
 
 export const refreshCustomerData = (state) => {
-    return {
-        type: "REFRESH_CUSTOMER_DATA",
-        payload: state
+    return dispatch => {        
+        return fetch(`http://${IP_PORT_ADDRESS}/api/getcustomers`)
+            .then(
+                response => response.json(),
+                error => console.log('An error occurred.', error)
+            )
+            .then(json => {
+                dispatch({
+                    type: "REFRESH_CUSTOMER_DATA",
+                    payload: json
+                })
+            })
     }
 }
